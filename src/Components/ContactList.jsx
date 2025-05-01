@@ -7,7 +7,7 @@ const ContactList = (props) => {
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
       {props.contacts.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-4 ">
           {props.contacts.map((contact) => (
             <div
               key={contact.id}
