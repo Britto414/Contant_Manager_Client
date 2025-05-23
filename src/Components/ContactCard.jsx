@@ -4,7 +4,7 @@ const ContactCard = (props) => {
   return (
     <div className="font-semibold text-md">
       <div >{props.contact.name}</div>
-      <div>{props.contact.number}</div>
+      <div>{props.contact.phone}</div>
   
     </div>
   );

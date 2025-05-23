@@ -2,25 +2,25 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddContact = (props) => {
-  const [contact, setContact] = useState({ name: "", number: "" });
+  const [contact, setContact] = useState({ name: "", phone: "" });
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, number } = contact;
+    const { name, phone } = contact;
 
-    if (name === "" || number === "") {
+    if (name === "" || phone === "") {
       alert("Enter the valid info");
     } else {
-      props.AddC(contact, navigate);
-      setContact({ name: "", number: "" });
+      props.HandleContact(contact, navigate);
+      setContact({ name: "", phone: "" });
     }
   };
 
   return (
     <div >
       
-      <h2 class="text-2xl font-semibold text-gray-800">Add Contact</h2>
+      <h2 className="text-2xl font-semibold text-gray-800">Add Contact</h2>
       
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="mt-6 flex gap-8">
@@ -41,9 +41,9 @@ const AddContact = (props) => {
             className="border rounded-lg p-2 w[300px]"
             type="text"
             placeholder="Enter number"
-            value={contact.number}
+            value={contact.phone}
             onChange={(e) =>
-              setContact({ ...contact, number: e.target.value })
+              setContact({ ...contact, phone: e.target.value })
             }
           />
         </div>

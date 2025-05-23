@@ -7,44 +7,124 @@ import { useState, useEffect } from "react";
 import Login from "./Components/Login";
 import RegisterUser from "./Components/Register_user";
 import { v4 as uuid } from "uuid";
+import axios from "./api/axios";
 
 function App() {
   const LOCAL_STORAGE_KEY = "contacts";
   const [contacts, setContact] = useState([]);
+  const [loginError , setLoginError] = useState("");
 
-  const AddC = (contact, navigate) => {
-    const isDuplicate = contacts.some(
-      (c) =>
-        c.name.toLowerCase() === contact.name.toLowerCase() ||
-        c.number.toLowerCase() === contact.number.toLowerCase()
+  const HandleContact = async(contact, navigate) => {
+    const token  = localStorage.getItem("token");
+    const response = await axios.post(
+      "/contacts/",
+      contact,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // attach JWT token
+        },
+      }
     );
+    const newContact = response.data.contact;
+    console.log(newContact);
+    
+    setContact([...contacts, contact]);
 
-    if (!isDuplicate) {
-      const newcontact = { id: uuid(), ...contact };
-      setContact([...contacts, newcontact]);
-      navigate("/"); // Only navigate if the contact is added successfully
+
+    console.log("Contact added:", response.data);
+    navigate("/list")
+  }
+
+  const HandleRegister = (user , navigate) => {
+    console.log(user);
+    
+    axios.post("/user/register" , user)
+    .then((res)=>{
+      console.log(res.data);
+      navigate("/");
+    }).catch((err)=>{
+      console.log(err);
+    });
+
+  }
+
+  const HandleLogin = async (user, navigate) => {
+  try {
+    
+    localStorage.removeItem("token");
+
+    const res = await axios.post("/user/login", user);
+
+    localStorage.setItem("token", res.data.token);
+    setLoginError("");
+    // console.log("Login success:", res.data);
+
+    navigate("/list");
+  } catch (err) {
+    // Handle errors
+    if (err.response) {
+      setLoginError(err.response.data.message);
     } else {
-      alert("Contact already exists!");
+      setLoginError("Something went wrong");
+    }
+    // console.log(loginError);
+    
+  }
+  // console.log("Hi");
+};
+
+  
+
+useEffect(() => {
+  const fetchContacts = async () => {
+    try {
+     const token = localStorage.getItem("token");
+      if(token){
+        
+
+      const response = await axios.get("http://localhost:5000/api/contacts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const retrievedContacts = response.data;
+      console.log(retrievedContacts);
+
+      if (retrievedContacts) setContact(retrievedContacts);
+      }
+      
+    } catch (error) {
+      console.error("Failed to fetch contacts:", error);
     }
   };
 
-  useEffect(() => {
-    const retrievedContacts = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_KEY)
-    );
-    console.log(retrievedContacts);
+  fetchContacts();
+}, []);
 
-    if (retrievedContacts) setContact(retrievedContacts);
-  }, []);
 
   useEffect(() => {
+    
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
   }, [contacts]);
 
-  const deleteContact = (id) => {
-    const filtered = contacts.filter((contact) => id !== contact.id);
-    // console.log("Hi");
-    setContact(filtered);
+  const deleteContact = async (id) => {
+      const token = localStorage.getItem("token");
+
+  try {
+    await axios.delete(`/contacts/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Optionally update the local state after successful deletion
+    setContact((prevContacts) => prevContacts.filter((c) => c._id !== id));
+    console.log("Contact deleted");
+  } catch (error) {
+    console.error("Error deleting contact:", error.response?.data?.message || error.message);
+  }
+
   };
 
   return (
@@ -56,7 +136,7 @@ function App() {
             <Route
               path="/"
               element={
-                <Login/>
+                <Login HandleLogin={HandleLogin} Error={loginError}/>
               }
             />
 
@@ -64,6 +144,7 @@ function App() {
               path="/Register"
               element={
                 <RegisterUser
+                  Register={HandleRegister}
                 />
               }
             />
@@ -77,7 +158,7 @@ function App() {
                 />
               }
             />
-            <Route path="/add" element={<AddContact AddC={AddC} />} />
+            <Route path="/add" element={<AddContact HandleContact={HandleContact} />} />
 
             <Route path="/contact/:id" element={<ContactDetails />} />
            </Routes>

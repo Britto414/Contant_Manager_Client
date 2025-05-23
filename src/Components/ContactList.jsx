@@ -10,12 +10,12 @@ const ContactList = (props) => {
         <div className="space-y-4 ">
           {props.contacts.map((contact) => (
             <div
-              key={contact.id}
+              key={contact._id}
               className="border rounded-xl shadow-md hover:shadow-lg transition duration-300 bg-white"
             >
               <ul className="flex justify-between items-center p-4">
                 <Link
-                  to={`/contact/${contact.id}`}
+                  to={`/contact/${contact._id}`}
                   state={{ contact }}
                   className="flex-1"
                 >
@@ -25,7 +25,7 @@ const ContactList = (props) => {
                 <div className="flex gap-2 ml-4">
                   <button
                     className="bg-red-400 hover:bg-red-500 text-white font-medium rounded-full px-4 py-1.5 transition"
-                    onClick={() => props.deleteContact(contact.id)}
+                    onClick={() => props.deleteContact(contact._id)}
                   >
                     Delete
                   </button>
@@ -46,10 +46,16 @@ const ContactList = (props) => {
 
       <div className="flex justify-center mt-6">
         <button
-          className="bg-green-500 hover:bg-green-600 text-white font-semibold rounded-full px-6 py-2 transition"
+          className="bg-green-400 hover:bg-green-600 text-white font-semibold rounded-full px-6 py-2 transition"
           onClick={() => navigate("/add")}
         >
           Add
+        </button>
+        <button
+          className="bg-blue-400 hover:bg-blue-600 text-white font-semibold rounded-full px-6 py-2 transition ml-2"
+          onClick={() => {localStorage.removeItem("token");navigate("/")}}
+        >
+          Log Out
         </button>
       </div>
     </div>
