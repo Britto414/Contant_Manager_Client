@@ -1,14 +1,26 @@
+import { useState } from "react";
 import ContactCard from "./ContactCard";
 import { useNavigate, Link } from "react-router-dom";
 
 const ContactList = (props) => {
   const navigate = useNavigate();
-
+  
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
+      <div className="flex gap-3 mb-4">
+        <input type="text" placeholder="Search Contacts" className="border h-10 rounded-l px-4 w-full"
+        value={props.searchTerm}
+        onChange={(e)=>props.Handlesearch(e.target.value)}/>
+        <button
+          className="bg-green-400 hover:bg-green-600 text-white font-semibold rounded-full px-6 h-10 "
+          onClick={() => navigate("/add")}
+        >
+          Add
+        </button>
+      </div>
       {props.contacts.length > 0 ? (
-        <div className="space-y-4 ">
-          {props.contacts.map((contact) => (
+        props.contacts.map((contact) => (
+          <div className="space-y-4 mb-2" key={contact._id}>
             <div
               key={contact._id}
               className="border rounded-xl shadow-md hover:shadow-lg transition duration-300 bg-white"
@@ -31,29 +43,26 @@ const ContactList = (props) => {
                   </button>
                   <button
                     className="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-full px-4 py-1.5 transition"
-                    onClick={() => props.deleteContact(contact.id)}
+                    onClick = {()=> navigate("/edit" , {state:{contact}})}
                   >
                     Edit
                   </button>
                 </div>
               </ul>
             </div>
-          ))}
-        </div>
+          </div>
+        ))
       ) : (
         <p className="text-center text-gray-600 mt-6">No Contact Found</p>
       )}
 
       <div className="flex justify-center mt-6">
         <button
-          className="bg-green-400 hover:bg-green-600 text-white font-semibold rounded-full px-6 py-2 transition"
-          onClick={() => navigate("/add")}
-        >
-          Add
-        </button>
-        <button
           className="bg-blue-400 hover:bg-blue-600 text-white font-semibold rounded-full px-6 py-2 transition ml-2"
-          onClick={() => {localStorage.removeItem("token");navigate("/")}}
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/");
+          }}
         >
           Log Out
         </button>

@@ -24,7 +24,7 @@ const AddContact = (props) => {
       
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="mt-6 flex gap-8">
-          <label>Name</label>
+          <label className="w-29">Name</label>
           <input
             className="border rounded-lg p-2 w[300px]"
             type="text"

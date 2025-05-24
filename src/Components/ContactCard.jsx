@@ -1,6 +1,6 @@
 
 const ContactCard = (props) => {
-  console.log(props.contact);
+  // console.log(props.contact);
   return (
     <div className="font-semibold text-md">
       <div >{props.contact.name}</div>

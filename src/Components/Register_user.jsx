@@ -26,6 +26,7 @@ const RegisterUser = (props) => {
 
   return (
     <div className='w-3/4'>
+      <div className="text-3xl font-mono text-center">Register</div>
       <form onSubmit={HandleSubmit}>
         <div className="flex flex-col gap-2">
           <label htmlFor="user">Name:</label>
